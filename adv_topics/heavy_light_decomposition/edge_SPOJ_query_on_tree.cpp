@@ -1,6 +1,5 @@
  // https://www.spoj.com/problems/QTREE/ - colin galen
 
-// not AC dont know why
 
 #include<bits/stdc++.h>
 using namespace std;
@@ -126,8 +125,10 @@ struct HLD {
         }
 
         if(depth[a]>depth[b]) swap(a,b);
-
-        res = max(res,seg.query(1,0,n-1,pos[a],pos[b]));
+        if(a!=b){
+            res = max(res,seg.query(1,0,n-1,pos[a]+1,pos[b]));
+        }
+        
         return res;
     }
 };
@@ -159,7 +160,7 @@ int main(){
         unordered_map<long long,int> mp;
         mp.reserve(n*2);
 
-        vector<pair<int,int>> edges(n); // FIX: store edges by index
+        vector<pair<int,int>> edges(n); 
 
         for(int i=0;i<n-1;i++){
             int a,b,c;
