@@ -1,0 +1,73 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+using ll = long long;
+
+struct Query {
+    int l, r, id;
+};
+
+int BLOCK; 
+
+bool cmp(const Query &a, const Query &b) {
+    int block_a = a.l / BLOCK;
+    int block_b = b.l / BLOCK;
+    if (block_a != block_b)
+        return block_a < block_b;
+    return (block_a & 1) ? (a.r > b.r) : (a.r < b.r);
+    
+}
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(NULL);
+
+    int n, q;
+    cin >> n >> q;
+
+    vector<int> arr(n);
+    for (int &x : arr) cin >> x;
+
+    BLOCK = max(1LL,(long long)(n/sqrt(q)));
+
+    vector<Query> queries(q);
+    for (int i = 0; i < q; i++) {
+        cin >> queries[i].l >> queries[i].r;
+        queries[i].l--; queries[i].r--; 
+        queries[i].id = i;
+    }
+
+    sort(queries.begin(), queries.end(), cmp);
+
+    vector<ll> ans(q);
+    unordered_map<int,int> freq;
+    ll cur = 0;
+
+    auto add = [&](int idx) {
+        int x = arr[idx];
+        freq[x]++;
+        if (freq[x] == x) cur++; 
+        if(freq[x]==x+1)cur--;
+    };
+
+    auto remove = [&](int idx) {
+        int x = arr[idx];
+        freq[x]--;
+        if (freq[x] == x) cur++;
+        if(freq[x]==x-1)cur--;
+    };
+
+    int L = 0, R = -1;
+
+    for (auto &qr : queries) {
+        while (L > qr.l) add(--L);
+        while (R < qr.r) add(++R);
+        while (L < qr.l) remove(L++);
+        while (R > qr.r) remove(R--);
+
+        ans[qr.id] = cur;
+    }
+
+    for (ll x : ans)
+        cout << x << '\n';
+}

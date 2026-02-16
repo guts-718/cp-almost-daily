@@ -1,22 +1,3 @@
-
-/*
-init[i] = number of ways to start in state i.
-in dp recurrance it represents the base case..
-
-to optimise constant space dp... so first write iterative constant space dp.. then create matrix using the transitions...
-TC = K^3 log(n) = n is the exponent and k is the dimension of the vector - k^3 for standard matrix product
-
-to change in template - matrix size in main.. ie - Matrix A(k), the transition matrix (A) , exponent(n,n-1...) and we might need to multiply by some initial vector
-
-works for:
-- linear recurrences
-- transitions
-- DP state jumps
-- graph walks
-
-
-whenever we see - dp[i] depends on last k states then we can always convert
-*/
 #include <bits/stdc++.h>
 using namespace std;
 
@@ -63,9 +44,6 @@ vector<ll> multiply(const Matrix& M, const vector<ll>& v){
     for(int i=0;i<n;i++)
         for(int j=0;j<n;j++)
             res[i] = (res[i] + M.m[i][j]*v[j]) % MOD;
-
-//    M[i][j] = transitions FROM j TO i
-//    (ways we were at j) × (ways to go j → i)
     return res;
 }
 
@@ -76,28 +54,15 @@ vector<ll> apply(Matrix base, long long exp, vector<ll> init){
 
 
 int main(){
-    long long n;
-    cin >> n;
-
-    if(n==0){
-        cout << 0;
-        return 0;
-    }
-
-    // Matrix fib(2);
-    // fib.m = {
-    //     {1,1},
-    //     {1,0}
-    // };
-
-    // Matrix ans = power(fib, n-1);
+   long long n;
+   cin>>n;
 
     Matrix fib(2);
-    fib.m = {{1,1},{1,0}};
+    fib.m = {{19,6},{7,20}};
 
-    vector<ll> init = {1,0}; // F1, F0
+    vector<ll> init = {1,0}; 
 
-    auto ans = apply(fib, n-1, init);
-    cout << ans[0];
+    auto ans = apply(fib, n, init);
+    cout << ans[0] << endl;
 
 }

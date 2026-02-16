@@ -2,6 +2,18 @@
 ## helps optimise TC of constant space dp 
 ## represent like graph - the states = nodes and the transition = matrix (M[i][j] = number of edges from i → j)
 ---
+- init[i] = number of ways to start in state i.
+- in dp recurrance it represents the base case..
+
+| Problem asks       | init should be     |
+| ------------------ | ------------------ |
+| ways from node s   | only s = 1         |
+| ways from any node | all ones           |
+| ways from set S    | mark those         |
+| probability start  | probability vector |
+| DP recurrence      | base cases         |
+
+
 
 # 1. WHEN MATRIX EXPONENTIATION SHOULD TRIGGER IN YOUR BRAIN
 
