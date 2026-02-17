@@ -44,21 +44,28 @@ int32_t main() {
 
     // ---------- YOUR DATA STRUCTURE ----------
     // Example: frequency + current answer
-    unordered_map<int,int> freq;
+    vector<int>freq(1e6+3,0);
     ll cur = 0;
 
     auto add = [&](int idx) {
         int x = arr[idx];
+        int fr=freq[x];
+        cur-=(fr*fr*arr[idx]);
         freq[x]++;
-        if (freq[x] == 1) cur++; // example: distinct count
+        fr=freq[x];
+        cur+=(fr*fr*arr[idx]);
+       
     };
 
     auto remove = [&](int idx) {
         int x = arr[idx];
+        int fr=freq[x];
+        cur-=(fr*fr*arr[idx]);
         freq[x]--;
-        if (freq[x] == 0) cur--;
+        fr=freq[x];
+        cur+=(fr*fr*arr[idx]);
     };
-    // -----------------------------------------
+   
 
     int L = 0, R = -1;
 
