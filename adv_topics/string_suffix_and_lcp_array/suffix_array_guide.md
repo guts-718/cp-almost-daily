@@ -292,9 +292,12 @@ Combine:
 Build SA.
 
 Check adjacent suffixes from different strings.
-
 Take max LCP.
-
+```cpp
+for i = 1 … n-1
+    if sa[i] and sa[i-1] belong to different strings
+        ans = max(ans, lcp[i])
+```
 ------------------------------------------------------------------------
 
 ## 5. Number of Distinct Substrings

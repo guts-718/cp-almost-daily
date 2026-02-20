@@ -1,5 +1,6 @@
 /*
 
+// rank maps original index → position in suffix array
 
 | Operation         | Time       |
 | ----------------- | ---------- |
