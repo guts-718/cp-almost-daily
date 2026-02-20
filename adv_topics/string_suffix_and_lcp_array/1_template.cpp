@@ -77,7 +77,7 @@ auto &sa = SA.sa;
 auto &lcp = SA.lcp;
 */
 int main() {
-    string s = "banana";   // change input string here
+    string s = "banana";  
     SuffixArray SA(s);
 
     cout << "Suffix Array:\n";
