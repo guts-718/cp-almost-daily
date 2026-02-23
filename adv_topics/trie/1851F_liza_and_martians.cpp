@@ -1,3 +1,6 @@
+#include<bits/stdc++.h>
+using namespace std;
+//#define int long long
 class Trie {
 public:
     struct Node {
@@ -64,37 +67,46 @@ public:
     }
 };
 
-class Solution {
-public:
- int maxXor(vector<int>& nums, int k) {
-        int n = nums.size();
-        vector<int> pref(n + 1);
-        for (int i = 0; i < n; i++){
-            pref[i + 1] = pref[i] ^ nums[i];
-        }
-        
+
+int32_t main(){
+    int t;
+    cin>>t;
+    while(t--){
+        int n,k;
+        cin>>n>>k;
+        vector<int>a(n);
+        for(int i=0;i<n;i++)cin>>a[i];
         Trie trie;
-        int l = 0, ans = 0;
-        multiset<int> ms;
-        
-
-       
-        ms.insert(nums[0]);
-        trie.insert(pref[0]);
-       
-
-        for (int r = 0; r < n; r++) {
-            if (r > 0) ms.insert(nums[r]);
-
-            while (*ms.rbegin() - *ms.begin() > k) {
-                ms.erase(ms.find(nums[l]));
-                trie.erase(pref[l]);
-                l++;
+        int ans=2e9;
+        for(auto x:a)trie.insert(x);
+        int d=-1;
+        for(int i=0;i<n;i++){
+            trie.erase(a[i]);
+            int cur=trie.minxor(a[i]);
+            if(cur<ans){
+                ans=cur;
+                d=i;
             }
-
-            ans = max(ans, trie.maxxor(pref[r + 1]));
-            trie.insert(pref[r + 1]);
+            trie.insert(a[i]);
         }
-        return ans;
+        int sol=(ans^a[d]);
+        int e=-1;
+        for(int i=0;i<n;i++){
+            if(a[i]==sol && d!=i){
+                e=i;break;
+            }
+        }
+        if(d>e)swap(d,e);
+        int n1=a[d],n2=a[e];
+        //cout<<n1<<" "<<n2<<endl;
+        long long temp=0ll;
+        for(int i=k-1;i>=0;i--){
+            if(((n1>>i)&1)==((n2>>i)&1)){
+                if(!((n1>>i)&1)){
+                    temp+=(1<<i);
+                }
+            }
+        }
+        cout<<d+1<<" "<<e+1<<" "<<temp<<endl;
     }
-};
+}

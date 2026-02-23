@@ -1,9 +1,5 @@
 # Advanced DP Optimizations --- Master Notes
 
-Author: ChatGPT
-
-------------------------------------------------------------------------
-
 # Table of Contents
 
 1.  Knuth Optimization
