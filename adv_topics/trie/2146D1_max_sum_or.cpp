@@ -1,0 +1,239 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define int long long
+struct Trie {
+    struct Node {
+        Node* ch[2];
+        int cnt;
+        Node() { ch[0]=ch[1]=nullptr; cnt=0; }
+    };
+
+    int B;
+    Node* root;
+    int SZ = 0;
+
+    Trie(int BITS = 31){
+        B = BITS;
+        root = new Node();
+    }
+
+    // ---------- BASIC ----------
+    int size() { return SZ; }
+
+    bool exists(int x){
+        Node* cur=root;
+        for(int i=B;i>=0;i--){
+            int b=(x>>i)&1;
+            if(!cur->ch[b] || cur->ch[b]->cnt==0)
+                return false;
+            cur=cur->ch[b];
+        }
+        return true;
+    }
+
+    void insert(int x){
+        Node* cur=root;
+        for(int i=B;i>=0;i--){
+            int b=(x>>i)&1;
+            if(!cur->ch[b]) cur->ch[b]=new Node();
+            cur=cur->ch[b];
+            cur->cnt++;
+        }
+        SZ++;
+    }
+
+    void erase(int x){
+        if(!exists(x)) return;
+        Node* cur=root;
+        for(int i=B;i>=0;i--){
+            int b=(x>>i)&1;
+            cur=cur->ch[b];
+            cur->cnt--;
+        }
+        SZ--;
+    }
+
+    void clear(){
+        root=new Node();
+        SZ=0;
+    }
+
+    // ---------- MAX XOR ----------
+    int maxxor(int x){
+        Node* cur=root;
+        int ans=0;
+        for(int i=B;i>=0;i--){
+            int b=(x>>i)&1;
+            int want=b^1;
+            if(cur->ch[want] && cur->ch[want]->cnt){
+                ans|=(1<<i);
+                cur=cur->ch[want];
+            } else cur=cur->ch[b];
+        }
+        return ans;
+    }
+
+    // ---------- MIN XOR ----------
+    int minxor(int x){
+        Node* cur=root;
+        int ans=0;
+        for(int i=B;i>=0;i--){
+            int b=(x>>i)&1;
+            if(cur->ch[b] && cur->ch[b]->cnt){
+                cur=cur->ch[b];
+            } else {
+                ans|=(1<<i);
+                cur=cur->ch[b^1];
+            }
+        }
+        return ans;
+    }
+
+    // ---------- COUNT nums with (num XOR x) <= k ----------
+    int count_le(int x,int k){
+        Node* cur=root;
+        int ans=0;
+        for(int i=B;i>=0;i--){
+            if(!cur) break;
+
+            int xb=(x>>i)&1;
+            int kb=(k>>i)&1;
+
+            if(kb){
+                if(cur->ch[xb])
+                    ans+=cur->ch[xb]->cnt;
+                cur=cur->ch[xb^1];
+            }
+            else{
+                cur=cur->ch[xb];
+            }
+        }
+        return ans;
+    }
+
+    // ---------- KTH SMALLEST ----------
+    int kth(int k){
+        Node* cur=root;
+        int ans=0;
+        for(int i=B;i>=0;i--){
+            int left = cur->ch[0] ? cur->ch[0]->cnt : 0;
+
+            if(k<=left){
+                cur=cur->ch[0];
+            } else{
+                k-=left;
+                ans|=(1<<i);
+                cur=cur->ch[1];
+            }
+        }
+        return ans;
+    }
+
+    // ---------- COUNT < x ----------
+    int count_less(int x){
+        Node* cur=root;
+        int ans=0;
+        for(int i=B;i>=0;i--){
+            if(!cur) break;
+            int b=(x>>i)&1;
+
+            if(b){
+                if(cur->ch[0])
+                    ans+=cur->ch[0]->cnt;
+                cur=cur->ch[1];
+            }
+            else{
+                cur=cur->ch[0];
+            }
+        }
+        return ans;
+    }
+
+    // ---------- MEX ----------
+    int mex(){
+        Node* cur=root;
+        int ans=0;
+        for(int i=B;i>=0;i--){
+            int left = cur->ch[0]?cur->ch[0]->cnt:0;
+            int limit = 1<<i;
+
+            if(left < limit){
+                cur=cur->ch[0];
+            } else{
+                ans|=(1<<i);
+                cur=cur->ch[1];
+            }
+            if(!cur) break;
+        }
+        return ans;
+    }
+
+    // ---------- MERGE TWO TRIES ----------
+    static Node* merge(Node* a, Node* b){
+        if(!a) return b;
+        if(!b) return a;
+        Node* r=new Node();
+        r->cnt = a->cnt + b->cnt;
+        r->ch[0]=merge(a->ch[0],b->ch[0]);
+        r->ch[1]=merge(a->ch[1],b->ch[1]);
+        return r;
+    }
+
+    // ---------- MAX XOR PAIR ----------
+    int max_pair_xor(){
+        return dfs_pair(root, root, B);
+    }
+
+    int dfs_pair(Node* a, Node* b, int bit){
+        if(!a || !b || bit<0) return 0;
+        int best=0;
+
+        if(a->ch[0] && b->ch[1])
+            best=max(best,(1<<bit)+dfs_pair(a->ch[0],b->ch[1],bit-1));
+
+        if(a->ch[1] && b->ch[0])
+            best=max(best,(1<<bit)+dfs_pair(a->ch[1],b->ch[0],bit-1));
+
+        if(best) return best;
+
+        return max(
+            dfs_pair(a->ch[0],b->ch[0],bit-1),
+            dfs_pair(a->ch[1],b->ch[1],bit-1)
+        );
+    }
+};
+
+
+int32_t main() {
+	// your code goes here
+	int t;
+	cin>>t;
+	while(t--){
+	    int l,r;
+	    cin>>l>>r;
+	    Trie trie;
+	    for(int i=l;i<=r;i++){
+	        trie.insert(i);
+	    }
+	    vector<int>ans(r-l+1,0);
+	    for(int i=r;i>=l;i--){
+	        int mx=trie.maxxor(i);
+	        int no=mx^i;
+	       // cout<<no<<" ";
+	        ans[no]=i;
+	        trie.erase(no);
+	    }
+	  
+	    int sol=0,no=l;
+	    for(auto x:ans){
+	        sol+=(x|no);
+	        no++;
+	    }
+	    cout<<sol<<endl;
+	    for(auto x:ans)cout<<x<<" ";
+	    cout<<endl;
+	    
+	  
+	}
+
+}
