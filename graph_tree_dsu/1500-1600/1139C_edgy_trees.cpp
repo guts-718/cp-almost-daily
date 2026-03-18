@@ -46,6 +46,7 @@ int main() {
 	}
 	long long p=powr(n,k);
 	p=(p-ans+mod)%mod;
+    p=(p+mod)%mod;
 	cout<<p<<endl;
 
 }
